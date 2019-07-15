@@ -15,10 +15,11 @@ Tested using: Anaconda 2018.12 | Python 3.7.3 | Keras 2.2.4 | Tensorflow 1.13.1 
 
 ### Environment Setup
 
-1. Install Anaconda with Python 3.5 or higher.
-2. Install Keras with Tensorflow backend.
-3. Install h5py.
-4. Install additional dependencies:
+1. Install [AirSim](https://github.com/microsoft/AirSim).
+2. Install [Anaconda with Python 3.5 or higher](https://www.anaconda.com/distribution/).
+3. Install Keras with Tensorflow backend.
+4. Install h5py.
+5. Install additional dependencies:
    * matplotlib v.
    * image
    * opencv
