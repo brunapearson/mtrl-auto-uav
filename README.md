@@ -6,15 +6,35 @@
 
 Tested using: Anaconda 2018.12 | Python 3.7.3 | Keras 2.2.4 | Tensorflow 1.13.1 | cv2 3.4.2
 
-### Network Architecture:
+## Network Architecture:
 
 ![MTRL Network](https://github.com/brunapearson/mtrl-auto-uav/blob/master/images/fig2.jpg)
+
+## Prerequisites and setup
+
+
+### Environment Setup
+
+1. Install Anaconda with Python 3.5 or higher.
+2. Install Keras with Tensorflow backend.
+3. Install h5py.
+4. Install additional dependencies:
+  * matplotlib v.
+  * image
+  * opencv
+  * msgpack-rpc-python
+  * pandas
+  * numpy
+  * scipy
+
+### Simulator Package
+
 
 ### Reference:
 If making use of this work in any way (including our pretrained models or dataset), please reference the following:
 
 Multi-Task Regression-based Learning for Autonomous Unmanned Aerial Vehicle Flight Control within Unstructured Outdoor Environments 
-[ ] (Maciel-Pearson et al., In Robotics and Automation Letters IEEE, 2019)
+[Maciel-Pearson et al., In Robotics and Automation Letters IEEE, 2019]( ).
 
 ```
 @article{pearson19regression,
@@ -27,3 +47,6 @@ Multi-Task Regression-based Learning for Autonomous Unmanned Aerial Vehicle Flig
   publisher={IEEE}
 }
 ```
+
+### TO-DO
+- [ ] write installation/setup instructions, including conda container
