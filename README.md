@@ -32,7 +32,7 @@ Tested using: Anaconda 2018.12 | Python 3.7.3 | Keras 2.2.4 | Tensorflow 1.13.1 
 
 
 ### Reference:
-If making use of this work in any way (including our pretrained models or dataset), please reference the following:
+If making use of this work in any way (including our [pre-trained models](https://zenodo.org/record/3338078#.XS32h-hKguU) or [dataset](https://zenodo.org/record/3270774#.XS32sehKguU), please reference the following:
 
 Multi-Task Regression-based Learning for Autonomous Unmanned Aerial Vehicle Flight Control within Unstructured Outdoor Environments 
 [Maciel-Pearson et al., In Robotics and Automation Letters IEEE, 2019]( ).
