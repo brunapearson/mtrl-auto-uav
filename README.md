@@ -38,7 +38,7 @@ Here you can define how many *predictions* should be computed by the network. At
 
 Here the behaviour of the UAV can be defined either as *search* or *flight*. In the *search* mode, the UAV navigational change in *x* and *y* directions are increased, which results in a wider angular rotation of the head. In contrast, when the behaviour is set to *flight* the predicted values are smoothed, which reduces the angular rotation of the head. During the production of this paper, all test were carried using the *search* mode.
 
-**start position [-100,100]***
+**start position [-100,100]**
 
 Here the starting position of the drone can be defined by assigning a value for the *x*,*y*,*z* coordinates. We recommend these value to be between -100 and 100.
 
