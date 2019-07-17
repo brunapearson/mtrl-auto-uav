@@ -1,5 +1,19 @@
+################################################################################
+
+# End-to-End Multi-Task Regression-based Learning approach capable of deﬁning
+# ﬂight commands for navigation and exploration under the forest canopy
+
+# Copyright (c) 2019 - Maciel-Pearson, B.G., Akçay, S., Atapour-Abarghouei, A.,
+# Holder, C. and Breckon, T.P., Durham University, UK
+
+# License : https://github.com/brunapearson/mtrl-auto-uav/blob/master/LICENSE
+
+################################################################################
+
 import setup_path
 import airsim
+
+################################################################################
 
 import numpy as np
 import time
@@ -13,8 +27,12 @@ from scipy.misc import imsave
 import matplotlib.pyplot as plt
 plt.ion()
 
+################################################################################
+
 from mtrl_network import*
 import mtrl_network
+
+################################################################################
 
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential, Model
@@ -28,22 +46,28 @@ from keras.preprocessing import image
 import tensorflow as tf
 from keras.models import load_model
 from pyquaternion import Quaternion
+
+################################################################################
+
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 n_intervention = 0
 
+################################################################################
+
+# load pre-trained model
 def load_trained_model(weights_path):
     model = create_model()
     model.load_weights(weights_path)
     model.compile(optimizer=Adam(lr=1e-04), loss=[euc_loss1x,euc_loss1y,euc_loss1z,euc_loss1rw,euc_loss1rx,euc_loss1ry,euc_loss1rz])
     return model
 
-#convert horizonal fov to vertical fov
+# convert horizonal fov to vertical fov
 def hfov2vfov(hfov, image_sz):
     aspect = image_sz[0]/image_sz[1]
     vfov = 2*math.atan( tan(hfov/2) * aspect)
     return vfov
 
-#compute bounding box size
+# compute bounding box size
 def compute_bb(image_sz, obj_sz, hfov, distance):
     vfov = hfov2vfov(hfov,image_sz)
     box_h = ceil(obj_sz[0] * image_sz[0] / (math.tan(hfov/2)*distance*2))
@@ -57,19 +81,36 @@ def generate_depth_viz(img,thres=0):
         img = np.reciprocal(img)
     return img
 
+################################################################################
+
 def moveUAV(client,pred_pos,yaw):
     client.moveToPositionAsync(pred_pos[0], pred_pos[1], pred_pos[2],5,drivetrain = airsim.DrivetrainType.ForwardOnly,lookahead=-1,adaptive_lookahead=1, yaw_mode = airsim.YawMode(is_rate = False, yaw_or_rate = yaw))
     time.sleep(1)
 
-def interventions_counter(client,depth_img,uav_size,pred_pos,yaw):
+def interventions_counter(client,depth_img,uav_size,pred_pos,yaw,behaviour):
     global n_intervention
 
     current_pos = client.simGetGroundTruthKinematics().position
-    p_x = ((current_pos.x_val - pred_pos[0])*(0.75))+current_pos.x_val
-    p_y = ((current_pos.y_val - pred_pos[1])*(-0.75))+current_pos.y_val
+
+    if behaviour=="search":
+        # check change in position to maximize exploration in x direction
+        if int(pred_pos[0])<0:
+            p_x = int(abs(pred_pos[0])-abs(current_pos.x_val)*(-2))
+        else:
+            p_x = int(abs(pred_pos[0])+abs(current_pos.x_val))
+        # check change in position to maximize exploration in y direction
+        if int(pred_pos[1])<0:
+            p_y = int(abs(pred_pos[1])-abs(current_pos.y_val)*(-2))
+        else:
+            p_y = int(abs(pred_pos[1])+abs(current_pos.y_val))
+
+    if behaviour=="flight":
+        p_x = ((current_pos.x_val - pred_pos[0])*(0.75))+current_pos.x_val
+        p_y = ((current_pos.y_val - pred_pos[1])*(-0.75))+current_pos.y_val
+
     p_z = ((current_pos.z_val-pred_pos[2])*0.15)+current_pos.z_val #snowy
 
-    #control max_height and min_height
+    # control max_height and min_height
     if p_z < -150:
         p_z=(-30)
     elif p_z==0 or p_z > (-2):
@@ -94,15 +135,19 @@ def interventions_counter(client,depth_img,uav_size,pred_pos,yaw):
 
 def recover_collision(client):
 
+    # verify if a collision has happened
     collision_info = client.simGetCollisionInfo()
 
+    # if a collision happened verify if has forced the drone to land
     if (collision_info.has_collided == True):
         landed = client.getMultirotorState().landed_state
+        # if the drone has landed take off again and change flight position
         if landed == airsim.LandedState.Landed:
             client.takeoffAsync().join()
             client.moveToPositionAsync(-60, 50, -16,5,drivetrain = airsim.DrivetrainType.ForwardOnly,lookahead=-1,adaptive_lookahead=1, yaw_mode = airsim.YawMode(is_rate = False, yaw_or_rate = 0))
             time.sleep(2)
         else:
+            # if the drone has not landed verify the height and adjust it to acceptable flight conditions
             current_pos = client.simGetGroundTruthKinematics().position
             p_z = current_pos.z_val
             if p_z==0 or p_z > (-2):
@@ -125,6 +170,7 @@ def get_image(client):
 
     return image_buf
 
+################################################################################
 
 #confirm connection to simulator
 client = airsim.MultirotorClient()
@@ -145,14 +191,14 @@ uav_size = [0.29*3,0.98*2] #height:0.29 x width:0.98 - allow some tolerance
 #move uav to initial position
 moveUAV(client,pos,0)
 
-#load trained model
+#load pre-trained model
 model = load_trained_model('models\model_0.5004407.h5')
 
 
 
 for i in range(150):
 
-    #get depth image
+    # get depth image
     depth = client.simGetImages([airsim.ImageRequest("0", airsim.ImageType.DepthPerspective, True)])
     # get numpy array
     img1d = depth[0].image_data_float
@@ -160,12 +206,11 @@ for i in range(150):
     # reshape array to 2D array H X W
     img2d = np.reshape(img1d,(depth[0].height, depth[0].width))
 
-    #feed predicted position
+    # feed predicted position
     input_image = get_image(client)
     input_image = np.array(input_image, dtype=np.float32)
     m = 27.824116
     input_image -= m
-    #input_image = np.expand_dims(input_image, axis=0) #expand from 3D to 4D
     input_image = input_image.reshape(1,224,224,3)
     pos_x,pos_y,pos_z,rot_w,rot_x,rot_y,rot_z = model.predict(input_image)
     action = [pos_x[0][0],pos_y[0][0],pos_z[0][0]]
@@ -182,8 +227,9 @@ for i in range(150):
     pos[1] = float(pos_y[0][0])
     pos[2] = float(pos_z[0][0])
 
-    #move uav to correct position
-    interventions_counter(client,img2d,uav_size,pos,yaw)
+    # move uav to correct position and monitor the number of interventions
+    interventions_counter(client,img2d,uav_size,pos,yaw,"search")
+    # in case a collision happens, this function will attempt to regain flight conditions
     recover_collision(client)
 
 print('Total number of intervention: ', n_intervention)
