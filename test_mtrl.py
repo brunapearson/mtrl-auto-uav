@@ -56,7 +56,7 @@ n_collision = 0
 
 ################################################################################
 
-# the functions in this block are heavily based on the work of:
+# Credits: the functions in this block are heavily based on the work of:
 # https://github.com/microsoft/AirSim/blob/master/PythonClient/computer_vision/cv_navigate.py
 
 # convert horizonal fov to vertical fov
@@ -141,7 +141,7 @@ def interventions_counter(client,depth_img,uav_size,pred_pos,yaw,behaviour,smoot
 def recover_collision(client):
     global n_collision
 
-    # verify if a collision has happened
+    # verify if a collision has happen
     collision_info = client.simGetCollisionInfo()
 
     # if a collision happened verify if has forced the drone to land
@@ -250,5 +250,7 @@ for i in range(n_predictions):
     # in case a collision happens, this function will attempt to regain flight conditions
     recover_collision(client)
 
+################################################################################
 print('Total number of intervention: ', n_intervention)
 print('Total number of collisions:', n_collision)
+################################################################################
