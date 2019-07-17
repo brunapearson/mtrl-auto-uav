@@ -30,9 +30,21 @@ Tested using: Anaconda 2018.12 | Python 3.7.3 | Keras 2.2.4 | Tensorflow 1.13.1 
 
 ### Simulator 
 
+**n_predictions[n]**
+
+Here you can define how many *predictions* should be computed by the network. At each iteration, one set of predicted values for waypoints (x,y,z) and orientations are outputted.
+
 **behaviour [search,flight]**
 
 Here the behaviour of the UAV can be defined either as *search* or *flight*. In the *search* mode, the UAV navigational change in *x* and *y* directions are increased, which results in a wider angular rotation of the head. In contrast, when the behaviour is set to *flight* the predicted values are smoothed, which reduces the angular rotation of the head. During the production of this paper, all test were carried using the *search* mode.
+
+**start position [-100,100]***
+
+Here the starting position of the drone can be defined by assigning a value for the *x*,*y*,*z* coordinates. We recommend these value to be between -100 and 100.
+
+**smoothness [-2.0,2.0]**
+
+When using the flight mode, you can also define the smoothness of the flight in the x,y and z directions. We recommend using values between -2.0 and 2.0.
 
 ```
 $ python test_mtrl.py n_predictions behaviour x y z smoothness_x smoothness_y smoothness_z
