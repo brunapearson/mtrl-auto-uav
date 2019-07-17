@@ -29,8 +29,13 @@ Tested using: Anaconda 2018.12 | Python 3.7.3 | Keras 2.2.4 | Tensorflow 1.13.1 
    * scipy
 
 ### Simulator Package
-
-
+```
+$ python test_mtrl.py n_predictions behaviour x y z smoothness_x smoothness_y smoothness_z
+```
+Example:
+```
+$ python test_mtrl.py 150 search -3 -10 -10 0.75 -0.75 0.15
+```
 ### Reference:
 If making use of this work in any way (including our [pre-trained models](https://zenodo.org/record/3338078#.XS32h-hKguU) or [dataset](https://zenodo.org/record/3270774#.XS32sehKguU), please reference the following:
 
