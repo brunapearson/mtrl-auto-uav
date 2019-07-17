@@ -18,6 +18,7 @@ import airsim
 import numpy as np
 import time
 import os
+import sys
 import glob
 import cv2
 import math
@@ -51,6 +52,7 @@ from pyquaternion import Quaternion
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 n_intervention = 0
+n_collision = 0
 
 ################################################################################
 
@@ -87,7 +89,7 @@ def moveUAV(client,pred_pos,yaw):
     client.moveToPositionAsync(pred_pos[0], pred_pos[1], pred_pos[2],5,drivetrain = airsim.DrivetrainType.ForwardOnly,lookahead=-1,adaptive_lookahead=1, yaw_mode = airsim.YawMode(is_rate = False, yaw_or_rate = yaw))
     time.sleep(1)
 
-def interventions_counter(client,depth_img,uav_size,pred_pos,yaw,behaviour):
+def interventions_counter(client,depth_img,uav_size,pred_pos,yaw,behaviour,smoothness_x,smoothness_y,smoothness_z):
     global n_intervention
 
     current_pos = client.simGetGroundTruthKinematics().position
@@ -105,10 +107,10 @@ def interventions_counter(client,depth_img,uav_size,pred_pos,yaw,behaviour):
             p_y = int(abs(pred_pos[1])+abs(current_pos.y_val))
 
     if behaviour=="flight":
-        p_x = ((current_pos.x_val - pred_pos[0])*(0.75))+current_pos.x_val
-        p_y = ((current_pos.y_val - pred_pos[1])*(-0.75))+current_pos.y_val
+        p_x = ((current_pos.x_val - pred_pos[0])*(smoothness_x))+current_pos.x_val
+        p_y = ((current_pos.y_val - pred_pos[1])*(smoothness_y))+current_pos.y_val
 
-    p_z = ((current_pos.z_val-pred_pos[2])*0.15)+current_pos.z_val #snowy
+    p_z = ((current_pos.z_val-pred_pos[2])*smoothness_z)+current_pos.z_val #snowy
 
     # control max_height and min_height
     if p_z < -150:
@@ -134,12 +136,14 @@ def interventions_counter(client,depth_img,uav_size,pred_pos,yaw,behaviour):
         time.sleep(1)
 
 def recover_collision(client):
+    global n_collision
 
     # verify if a collision has happened
     collision_info = client.simGetCollisionInfo()
 
     # if a collision happened verify if has forced the drone to land
     if (collision_info.has_collided == True):
+        n_collision += 1
         landed = client.getMultirotorState().landed_state
         # if the drone has landed take off again and change flight position
         if landed == airsim.LandedState.Landed:
@@ -185,6 +189,16 @@ state = client.getMultirotorState()
 
 #define start position
 pos = [-1,-5,-6] #start position x,y,z
+
+n_predictions = int(sys.argv[1])
+behaviour = str(sys.argv[2])
+pos[0] = int(sys.argv[3])
+pos[1] = int(sys.argv[4])
+pos[2] = int(sys.argv[5])
+smoothness_x = float(sys.argv[6])
+smoothness_y = float(sys.argv[7])
+smoothness_z = float(sys.argv[8])
+
 #pos = [-10,55,-34] #start position x,y,z for snowy mountain
 uav_size = [0.29*3,0.98*2] #height:0.29 x width:0.98 - allow some tolerance
 
@@ -196,7 +210,7 @@ model = load_trained_model('models\model_0.5004407.h5')
 
 
 
-for i in range(150):
+for i in range(n_predictions):
 
     # get depth image
     depth = client.simGetImages([airsim.ImageRequest("0", airsim.ImageType.DepthPerspective, True)])
@@ -228,8 +242,9 @@ for i in range(150):
     pos[2] = float(pos_z[0][0])
 
     # move uav to correct position and monitor the number of interventions
-    interventions_counter(client,img2d,uav_size,pos,yaw,"search")
+    interventions_counter(client,img2d,uav_size,pos,yaw, behaviour,smoothness_x,smoothness_y,smoothness_z)
     # in case a collision happens, this function will attempt to regain flight conditions
     recover_collision(client)
 
 print('Total number of intervention: ', n_intervention)
+print('Total number of collisions:', n_collision)

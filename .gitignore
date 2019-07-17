@@ -104,3 +104,4 @@ venv.bak/
 .mypy_cache/
 *.h5
 *.zip
+test_arg.py
