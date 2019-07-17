@@ -32,7 +32,7 @@ Tested using: Anaconda 2018.12 | Python 3.7.3 | Keras 2.2.4 | Tensorflow 1.13.1 
 
 **behaviour [search,flight]**
 
-Here the behaviour of the UAV can be defined either as *search* or *flight*. In the *search* mode, the UAV navigational change in *x* and *y* directions are increased, which results in a wider angular rotation of the head. In contrast, when the behaviour is set to *flight* the predicted values are smoothed, which reduces the angular rotation of the head. During the production of the paper, all test were carried using the search mode.
+Here the behaviour of the UAV can be defined either as *search* or *flight*. In the *search* mode, the UAV navigational change in *x* and *y* directions are increased, which results in a wider angular rotation of the head. In contrast, when the behaviour is set to *flight* the predicted values are smoothed, which reduces the angular rotation of the head. During the production of this paper, all test were carried using the *search* mode.
 
 ```
 $ python test_mtrl.py n_predictions behaviour x y z smoothness_x smoothness_y smoothness_z
