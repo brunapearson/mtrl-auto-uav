@@ -56,12 +56,8 @@ n_collision = 0
 
 ################################################################################
 
-# load pre-trained model
-def load_trained_model(weights_path):
-    model = create_model()
-    model.load_weights(weights_path)
-    model.compile(optimizer=Adam(lr=1e-04), loss=[euc_loss1x,euc_loss1y,euc_loss1z,euc_loss1rw,euc_loss1rx,euc_loss1ry,euc_loss1rz])
-    return model
+# the functions in this block are heavily based on the work of:
+# https://github.com/microsoft/AirSim/blob/master/PythonClient/computer_vision/cv_navigate.py
 
 # convert horizonal fov to vertical fov
 def hfov2vfov(hfov, image_sz):
@@ -84,6 +80,13 @@ def generate_depth_viz(img,thres=0):
     return img
 
 ################################################################################
+
+# load pre-trained model
+def load_trained_model(weights_path):
+    model = create_model()
+    model.load_weights(weights_path)
+    model.compile(optimizer=Adam(lr=1e-04), loss=[euc_loss1x,euc_loss1y,euc_loss1z,euc_loss1rw,euc_loss1rx,euc_loss1ry,euc_loss1rz])
+    return model
 
 def moveUAV(client,pred_pos,yaw):
     client.moveToPositionAsync(pred_pos[0], pred_pos[1], pred_pos[2],5,drivetrain = airsim.DrivetrainType.ForwardOnly,lookahead=-1,adaptive_lookahead=1, yaw_mode = airsim.YawMode(is_rate = False, yaw_or_rate = yaw))
@@ -176,7 +179,7 @@ def get_image(client):
 
 ################################################################################
 
-#confirm connection to simulator
+# confirm connection to simulator
 client = airsim.MultirotorClient()
 client.confirmConnection()
 client.enableApiControl(True)
@@ -184,12 +187,16 @@ print("arming the drone...")
 client.armDisarm(True)
 client.takeoffAsync().join()
 
-#get uav current state
+# get uav current state
 state = client.getMultirotorState()
-
-#define start position
+# define start position
 pos = [-1,-5,-6] #start position x,y,z
+# define uav size
+uav_size = [0.29*3,0.98*2] #height:0.29 x width:0.98 - allow some tolerance
 
+################################################################################
+
+# read user's input
 n_predictions = int(sys.argv[1])
 behaviour = str(sys.argv[2])
 pos[0] = int(sys.argv[3])
@@ -199,16 +206,13 @@ smoothness_x = float(sys.argv[6])
 smoothness_y = float(sys.argv[7])
 smoothness_z = float(sys.argv[8])
 
-#pos = [-10,55,-34] #start position x,y,z for snowy mountain
-uav_size = [0.29*3,0.98*2] #height:0.29 x width:0.98 - allow some tolerance
+################################################################################
 
 #move uav to initial position
 moveUAV(client,pos,0)
 
 #load pre-trained model
 model = load_trained_model('models\model_0.5004407.h5')
-
-
 
 for i in range(n_predictions):
 
@@ -236,7 +240,7 @@ for i in range(n_predictions):
     q.z_val = rot_z[0][0]
     pitch, roll, yaw  = airsim.to_eularian_angles(q)
 
-    #update position
+    # update position
     pos[0] = float(pos_x[0][0])
     pos[1] = float(pos_y[0][0])
     pos[2] = float(pos_z[0][0])
