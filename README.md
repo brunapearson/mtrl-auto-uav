@@ -39,7 +39,7 @@ $ conda install keras-gpu
 $ pip install opencv-python h5py matplotlib image pandas msgpack-rpc-python pyquaternion
 ```
 ---
-### Pre-trained Model:
+### Pre-trained Model
 * To provide better testing opportunities, we provide a set of pre-trained weights. The pre-trained are separately stored on [Zenodo](https://zenodo.org/record/3338078#.XTGBO6Yo8UG) due to their large size.  
 
 * The script entitled "download_model.sh" will download the pre-trained weights and check the file integrity.
@@ -83,7 +83,7 @@ Example:
 $ python test_mtrl.py 150 search -3 -10 -10 0.75 -0.75 0.15
 ```
 ---
-### Reference:
+### Reference
 If you make use of this work in any way (including our [pre-trained models](https://zenodo.org/record/3338078#.XS32h-hKguU) or [dataset](https://zenodo.org/record/3270774#.XS32sehKguU), please reference the following:
 
 Multi-Task Regression-based Learning for Autonomous Unmanned Aerial Vehicle Flight Control within Unstructured Outdoor Environments 
