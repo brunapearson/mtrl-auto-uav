@@ -32,8 +32,6 @@ $ conda install keras-gpu
    * opencv
    * msgpack-rpc-python
    * pandas
-   * numpy
-   * scipy
    * h5py
 
 ```
