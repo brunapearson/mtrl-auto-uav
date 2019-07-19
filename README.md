@@ -53,7 +53,7 @@ Here, the behaviour of the UAV can be defined either as *search* or *flight*. In
 
 | search | flight |
 | --- | --- |
-|     |     |
+| ![Searcg behaviour](https://github.com/brunapearson/mtrl-auto-uav/blob/master/images/search.gif)    | ![Flight behaviour](https://github.com/brunapearson/mtrl-auto-uav/blob/master/images/flight.gif) |
 
 **start position [-100,100]**
 
