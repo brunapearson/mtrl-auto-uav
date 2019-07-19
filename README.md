@@ -55,6 +55,7 @@ $ python test_mtrl.py 150 search -3 -10 -10 0.75 -0.75 0.15
 ```
 
 ---
+### Pre-trained Model:
 * To provide better testing opportunities, we provide a set of pre-trained weights. The pre-trained are separately stored on [Zenodo](https://zenodo.org/record/3338078#.XTGBO6Yo8UG) due to their large size.  
 
 * The script entitled "download_model.sh" will download the pre-trained weights and check the file integrity.
