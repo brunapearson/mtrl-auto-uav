@@ -33,9 +33,10 @@ $ conda install keras-gpu
    * msgpack-rpc-python
    * pandas
    * h5py
+   * pyquaternion
 
 ```
-$ pip install opencv-python h5py matplotlib image pandas msgpack-rpc-python
+$ pip install opencv-python h5py matplotlib image pandas msgpack-rpc-python pyquaternion
 ```
 
 ---
