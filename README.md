@@ -10,6 +10,8 @@ Tested using: [Anaconda 2018.12](https://www.anaconda.com/distribution/) | [Pyth
 
 ![MTRL Network](https://github.com/brunapearson/mtrl-auto-uav/blob/master/images/fig2.jpg)
 
+---
+
 ## Prerequisites and setup
 
 
@@ -27,6 +29,8 @@ Tested using: [Anaconda 2018.12](https://www.anaconda.com/distribution/) | [Pyth
    * pandas
    * numpy
    * scipy
+
+---
 
 ### Simulator 
 
