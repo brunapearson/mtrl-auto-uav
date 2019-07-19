@@ -27,7 +27,7 @@ $ conda install keras-gpu
 ```
 
 5. Install additional dependencies:
-   * matplotlib v.
+   * matplotlib
    * image
    * opencv
    * msgpack-rpc-python
