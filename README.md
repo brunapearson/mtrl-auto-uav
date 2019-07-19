@@ -19,8 +19,13 @@ Tested using: [Anaconda 2018.12](https://www.anaconda.com/distribution/) | [Pyth
 
 1. Install [AirSim](https://github.com/microsoft/AirSim).
 2. Install [Anaconda with Python 3.5 or higher](https://www.anaconda.com/distribution/).
-3. Install Keras with Tensorflow backend.
-4. Install h5py.
+3. Create an Anaconda environment (preferable using Python 3.7).
+4. Install Keras with Tensorflow backend.
+
+```
+$ conda install keras-gpu
+```
+
 5. Install additional dependencies:
    * matplotlib v.
    * image
@@ -29,6 +34,11 @@ Tested using: [Anaconda 2018.12](https://www.anaconda.com/distribution/) | [Pyth
    * pandas
    * numpy
    * scipy
+   * h5py
+
+```
+$ pip install opencv-python h5py matplotlib image pandas msgpack-rpc-python
+```
 
 ---
 
