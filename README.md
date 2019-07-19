@@ -96,6 +96,3 @@ Multi-Task Regression-based Learning for Autonomous Unmanned Aerial Vehicle Flig
   publisher={IEEE}
 }
 ```
-
-### TO-DO
-- [ ] write installation/setup instructions, including conda container
