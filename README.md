@@ -4,6 +4,8 @@
 
 **Abstract** *— Increased growth in the global Unmanned Aerial Vehicles (UAV) (drone) industry has expanded possibilities for fully autonomous UAV applications. A particular application which has in part motivated this research is the use of UAV in wide area search and surveillance operations in unstructured outdoor environments. The critical issue with such environments is the lack of structured features that could aid in autonomous ﬂight, such as road lines or paths. In this paper, we propose an End-to-End Multi-Task Regression-based Learning approach capable of deﬁning ﬂight commands for navigation and exploration under the forest canopy, regardless of the presence of trails or additional sensors (i.e. GPS). Training and testing are performed using a software in the loop pipeline which allows for a detailed evaluation against state-of-the-art pose estimation techniques. Our extensive experiments demonstrate that our approach excels in performing dense exploration within the required search perimeter, is capable of covering wider search regions, generalises to previously unseen and unexplored environments and outperforms contemporary state-of-the-art techniques.*
 
+![(Maciel-Pearson et al.,RA-L, 2019)](https://arxiv.org/pdf/1907.08320.pdf)
+
 Tested using: [Anaconda 2018.12](https://www.anaconda.com/distribution/) | [Python 3.7.3](https://www.python.org/downloads/release/python-373/) | [Keras 2.2.4](https://pypi.org/project/Keras/) | [Tensorflow 1.13.1](https://www.tensorflow.org/install/pip) | [OpenCV 3.4.2](https://pypi.org/project/opencv-python/)
 
 ## Network Architecture:
@@ -94,7 +96,7 @@ Multi-Task Regression-based Learning for Autonomous Unmanned Aerial Vehicle Flig
   title={Multi-Task Regression-based Learning for Autonomous Unmanned Aerial Vehicle Flight Control within Unstructured Outdoor Environments},
   author={Maciel-Pearson, B.G., Akçay, S., Atapour-Abarghouei, A., Holder, C. and Breckon, T.P.},
   journal={IEEE Robotics and Automation Letters},
-  volume={x},
+  volume={4},
   pages={1-8},
   year={2019},
   publisher={IEEE}
