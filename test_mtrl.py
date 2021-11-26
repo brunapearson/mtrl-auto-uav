@@ -24,8 +24,9 @@ import cv2
 import math
 from math import *
 from PIL import Image, ImageDraw
-from scipy.misc import imsave
+# from scipy.misc import imsave
 import matplotlib.pyplot as plt
+from datetime import datetime
 plt.ion()
 
 ################################################################################
@@ -49,7 +50,9 @@ from keras.models import load_model
 from pyquaternion import Quaternion
 
 ################################################################################
-
+xplots = []
+yplots = []
+zplots = []
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 n_intervention = 0
 n_collision = 0
@@ -168,13 +171,25 @@ def recover_collision(client):
 
 def get_image(client):
     image_buf = np.zeros((1, 432 , 768, 4))
-    image_response = client.simGetImages([airsim.ImageRequest(0, airsim.ImageType.Scene, False, False)])[0]
-    image1d = np.fromstring(image_response.image_data_uint8, dtype=np.uint8)
-    image_rgba = image1d.reshape(image_response.height, image_response.width, 4)
-    image_rgba = cv2.cvtColor(image_rgba,cv2.COLOR_RGBA2BGR)
-    image_buf = image_rgba.copy()
+    # image_response = client.simGetImages([airsim.ImageRequest(0, airsim.ImageType.Scene, False, False)])
+   
+    print("??????????????????????????????????????????????/")
+    response, = client.simGetImages([airsim.ImageRequest("0", airsim.ImageType.Scene, False, False)])
+    image = np.frombuffer(response.image_data_uint8, dtype=np.uint8).reshape(response.height, response.width, 3) 
+    
+    # image1d = np.frombuffer(image_response.image_data_uint8, dtype=np.uint8)
+    
+    # image_rgba = image1d.reshape(image_response.height, image_response.width, 4)
+    image_rgba = cv2.cvtColor(image,cv2.COLOR_RGBA2BGR)
+    image_buf = image.copy()
     image_buf = cv2.resize(image_buf,(224,224))
-
+    # img_rgb_1d = np.fromstring(image_response[0].image_data_uint8, dtype=np.uint8) 
+    # img_rgb = img_rgb_1d.reshape(image_response[0].height, image_response[0].width, 3)
+    # print(img_rgb.shape)
+    # cv2.imshow("img_rgb", image)
+    # cv2.waitKey(1)
+    # input('q')
+    
     return image_buf
 
 ################################################################################
@@ -212,8 +227,15 @@ smoothness_z = float(sys.argv[8])
 moveUAV(client,pos,0)
 
 #load pre-trained model
-model = load_trained_model('models\model_0.5004407.h5')
+model = load_trained_model('/home/naitri/Documents/mtrl-auto-uav/models/model_0.5004407.h5')
 
+chart_ = plt.figure()
+
+ax = plt.axes(projection='3d')
+#chart_ = plot_.add_subplot(2,2,2,projection='3d')
+# chart_.set_xlabel('X-axis')
+# chart_.set_ylabel('Y-axis')
+# chart_.set_zlabel('Z-axis')
 for i in range(n_predictions):
 
     # get depth image
@@ -226,11 +248,21 @@ for i in range(n_predictions):
 
     # feed predicted position
     input_image = get_image(client)
+    
     input_image = np.array(input_image, dtype=np.float32)
-    m = 27.824116
-    input_image -= m
+    
+    
     input_image = input_image.reshape(1,224,224,3)
     pos_x,pos_y,pos_z,rot_w,rot_x,rot_y,rot_z = model.predict(input_image)
+    xplots.append(pos_x[0][0])
+    yplots.append(pos_y[0][0])
+    zplots.append(pos_z[0][0])
+    # chart_.plot3D(xplots,yplots,zplots)
+    ax.plot3D(xplots, yplots, zplots, 'black')
+    ax.scatter3D(xplots, yplots, zplots, 'red')
+    print("show")
+    plt.show()
+
     action = [pos_x[0][0],pos_y[0][0],pos_z[0][0]]
 
     q = client.simGetVehiclePose().orientation
@@ -245,11 +277,11 @@ for i in range(n_predictions):
     pos[1] = float(pos_y[0][0])
     pos[2] = float(pos_z[0][0])
 
-    # move uav to correct position and monitor the number of interventions
+            # move uav to correct position and monitor the number of interventions
     interventions_counter(client,img2d,uav_size,pos,yaw, behaviour,smoothness_x,smoothness_y,smoothness_z)
-    # in case a collision happens, this function will attempt to regain flight conditions
+            # in case a collision happens, this function will attempt to regain flight conditions
     recover_collision(client)
-
+plt.savefig('mountain_150'+ datetime.now().strftime("%Y%m%d-%H%M%S")+'.png',dpi=100)
 ################################################################################
 print('Total number of intervention: ', n_intervention)
 print('Total number of collisions:', n_collision)

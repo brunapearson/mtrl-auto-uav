@@ -6,11 +6,11 @@ import cv2
 import math
 from math import *
 from PIL import Image, ImageDraw
-from scipy.misc import imsave
+# from scipy.misc import imsave
 import matplotlib.pyplot as plt
 plt.ion()
 
-from keras.preprocessing.image import ImageDataGenerator
+
 from keras.models import Sequential, Model
 from keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense, Lambda, Input, concatenate
 from keras.layers.normalization import BatchNormalization
@@ -20,9 +20,21 @@ from keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, CSVLogger, Early
 import keras.backend as K
 from keras.preprocessing import image
 import tensorflow as tf
-from keras.models import load_model
-from pyquaternion import Quaternion
 
+# from pyquaternion import Quaternion
+# from tensorflow.keras.models import Model
+# from tensorflow.keras.models import Sequential
+# from tensorflow.keras.layers import BatchNormalization
+# from tensorflow.keras.layers import AveragePooling2D
+# from tensorflow.keras.layers import MaxPooling2D
+# from tensorflow.keras.layers import Conv2D
+# from tensorflow.keras.layers import Activation
+# from tensorflow.keras.layers import Dropout
+# from tensorflow.keras.layers import Flatten
+# from tensorflow.keras.layers import Input
+# from tensorflow.keras.layers import Dense
+# from tensorflow.keras.layers import concatenate
+from keras.optimizers import Adam, SGD, Adamax, Nadam
 
 def euc_loss1x(y_true, y_pred):
     lx = K.sqrt(K.sum(K.square(y_true[:,:] - y_pred[:,:]), axis=1, keepdims=True))
@@ -60,11 +72,33 @@ def euc_loss1rz(y_true, y_pred):
 
 def create_model():
     #Create the convolutional stacks
-    input_img = Input(shape=(224,224,3))
+    # cv2.imshow('input', Input)
+    #input_img = Input(shape=(224,224,3))
+    input_img = Input(shape=(224, 224, 3))
 
+    '''model = Sequential()
+    model.add(Conv2D(16, (3,3), padding="same", activation="relu"))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(32, (3,3), padding="same", activation="relu"))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(64, (3,3), padding="same", activation="relu"))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Flatten())
+    model.add(Dense(500, activation='relu'))
+    model.add(Dense(100, activation='relu'))
+    model.add(Dense(20, activation='relu'))'''
+    
+    print("**********************entered model***********************")
+    print(input_img.shape)
     x = Conv2D(16, kernel_size=3, activation='relu')(input_img)
+    print("$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    print(x.shape)
     x = MaxPooling2D(pool_size=(2,2))(x)
+    print("maxpooling outpt??????????????????????????????")
+    print(x.shape)
     x = Conv2D(32, kernel_size=3, activation='relu')(x)
+    print("conv2d}}}}}}}}}}}}}}}}}}}}}")
+    print(x.shape)
     x = MaxPooling2D(pool_size=(2,2))(x)
     x = Conv2D(64, kernel_size=3, activation='relu')(x)
     x = MaxPooling2D(pool_size=(2,2))(x)

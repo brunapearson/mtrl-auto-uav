@@ -100,8 +100,13 @@ class VehicleClient:
     # simGetImage returns compressed png in array of bytes
     # image_type uses one of the ImageType members
     def simGetImages(self, requests, vehicle_name = ''):
-        responses_raw = self.client.call('simGetImages', requests, vehicle_name)
-        return [ImageResponse.from_msgpack(response_raw) for response_raw in responses_raw]
+        try:    
+            print(requests)
+            print(self.client)
+            responses_raw = self.client.call('simGetImages', requests, vehicle_name,False)
+            return [ImageResponse.from_msgpack(response_raw) for response_raw in responses_raw]
+        except Exception as e:
+            print('caught exception',e)
 
     def simGetCollisionInfo(self, vehicle_name = ''):
         return CollisionInfo.from_msgpack(self.client.call('simGetCollisionInfo', vehicle_name))
